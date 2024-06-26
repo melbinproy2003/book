@@ -11,9 +11,9 @@ function Login() {
         e.preventDefault();
         try {
             const response = await axios.post('http://localhost:8000/api/login/', { username, password });
-            localStorage.setItem('token', response.data.token);
+            localStorage.setItem('token', response.data.token); // Store token in local storage
             alert('Login successful!');
-            setError(''); // Clear error if login is successful
+            setError('');
         } catch (err) {
             setError('Invalid Credentials');
         }
@@ -46,7 +46,7 @@ function Login() {
                 </div>
                 <button type="submit" style={styles.button}>Login</button>
                 <div style={styles.registerLinkContainer}>
-                    Don't have an account? <Link to="/Register" style={styles.link}>Register</Link>
+                    Don't have an account? <Link to="/register" style={styles.link}>Register</Link>
                 </div>
             </form>
         </div>

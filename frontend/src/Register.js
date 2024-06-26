@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+import axiosInstance from './axiosInstance';
 import { Link } from 'react-router-dom';
 
 function Register() {
@@ -12,10 +12,11 @@ function Register() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            await axios.post('http://localhost:8000/api/register/', { username, password, email });
+            await axiosInstance.post('register/', { username, password, email });
             setSuccess('User registered successfully!');
             setError('');
         } catch (err) {
+            console.log(err);
             setSuccess('');
             setError('Registration failed');
         }
@@ -38,6 +39,16 @@ function Register() {
                     />
                 </div>
                 <div style={styles.formGroup}>
+                    <label style={styles.label}>Email:</label>
+                    <input 
+                        type="email" 
+                        value={email} 
+                        onChange={(e) => setEmail(e.target.value)} 
+                        required 
+                        style={styles.input}
+                    />
+                </div> 
+                <div style={styles.formGroup}>
                     <label style={styles.label}>Password:</label>
                     <input 
                         type="password" 
@@ -47,19 +58,9 @@ function Register() {
                         style={styles.input}
                     />
                 </div>
-                <div style={styles.formGroup}>
-                    <label style={styles.label}>Email:</label>
-                    <input 
-                        type="email" 
-                        value={email} 
-                        onChange={(e) => setEmail(e.target.value)} 
-                        required 
-                        style={styles.input}
-                    />
-                </div>
                 <button type="submit" style={styles.button}>Register</button>
                 <div style={styles.registerLinkContainer}>
-                    Already have an account? <Link to="/Login" style={styles.link}>Login</Link>
+                    Already have an account? <Link to="/login" style={styles.link}>Login</Link>
                 </div>
             </form>
         </div>

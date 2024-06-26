@@ -1,9 +1,11 @@
 from django.contrib.auth import authenticate
-from rest_framework import generics, status
+from rest_framework import generics, status, viewsets
 from rest_framework.authtoken.models import Token
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from .serializers import UserSerializer, RegisterSerializer
+from rest_framework.authtoken.views import ObtainAuthToken
 
 @api_view(['POST'])
 def login(request):
