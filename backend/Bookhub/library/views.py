@@ -1,16 +1,18 @@
 from django.contrib.auth import authenticate
-from rest_framework import generics, status, viewsets
+from rest_framework import generics, status
 from rest_framework.authtoken.models import Token
-from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from .serializers import UserSerializer, RegisterSerializer
-from rest_framework.authtoken.views import ObtainAuthToken
 
 @api_view(['POST'])
 def login(request):
-    username = request.data.get('username')
-    password = request.data.get('password')
+    try:
+        username = request.data['username']
+        password = request.data['password']
+    except KeyError:
+        return Response({'error': 'Please provide both username and password.'}, status=status.HTTP_400_BAD_REQUEST)
+
     user = authenticate(username=username, password=password)
     if user:
         token, created = Token.objects.get_or_create(user=user)
@@ -19,3 +21,18 @@ def login(request):
 
 class RegisterView(generics.CreateAPIView):
     serializer_class = RegisterSerializer
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user = self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        token, created = Token.objects.get_or_create(user=user)
+        return Response(
+            {'token': token.key, 'user': UserSerializer(user).data},
+            status=status.HTTP_201_CREATED,
+            headers=headers
+        )
+
+    def perform_create(self, serializer):
+        return serializer.save()
