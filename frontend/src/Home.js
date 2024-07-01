@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 function Home() {
     const [books, setBooks] = useState([]);
+    const navigate = useNavigate();
 
     useEffect(() => {
         async function fetchBooks() {
-            const response = await fetch('http://localhost:8000/books/', {
+            const response = await fetch('http://localhost:8000/api/books/', {
                 headers: {
                     'Authorization': `Token ${localStorage.getItem('token')}`
                 }
@@ -13,8 +15,14 @@ function Home() {
             const data = await response.json();
             setBooks(data);
         }
+        
         fetchBooks();
     }, []);
+
+    const handleLogout = () => {
+        localStorage.removeItem('token');
+        navigate('/login');
+    };
 
     return (
         <div style={styles.container}>
@@ -22,7 +30,7 @@ function Home() {
                 <h1 style={styles.title}>Book Hub</h1>
                 <nav style={styles.navbar}>
                     <a href="#" style={styles.navlink}>HOME</a>
-                    <a href="#" style={styles.navlink}>LOGOUT</a>
+                    <a href="#" style={styles.navlink} onClick={handleLogout}>LOGOUT</a>
                 </nav>
             </header>
             <div style={styles.searchContainer}>
@@ -35,6 +43,7 @@ function Home() {
                 {books.map(book => (
                     <div key={book.id} style={styles.card}>
                         <img src={book.image || 'https://placehold.co/200x300'} alt={book.title} style={styles.cardImage} />
+                        {console.log(book.image)}
                         <div style={styles.cardBody}>
                             <h5 style={styles.cardTitle}>{book.title}</h5>
                             <p style={styles.cardText}>Author: <span style={styles.cardTextBold}>{book.author}</span></p>

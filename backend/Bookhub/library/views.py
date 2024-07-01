@@ -1,3 +1,4 @@
+from rest_framework.authentication import TokenAuthentication
 from django.contrib.auth import authenticate
 from rest_framework import generics, status, permissions
 from rest_framework.authtoken.models import Token
@@ -50,6 +51,7 @@ class BookCreateView(generics.CreateAPIView):
     queryset = Book.objects.all()
     serializer_class = BookSerializer
     permission_classes = [permissions.IsAuthenticated]
+    authentication_classes = [TokenAuthentication]
 
     def perform_create(self, serializer):
         if not self.request.user.is_librarian:
@@ -59,9 +61,9 @@ class BookCreateView(generics.CreateAPIView):
 class BookListView(generics.ListAPIView):
     queryset = Book.objects.all()
     serializer_class = BookSerializer
-    permission_classes = [permissions.IsAuthenticated]  # Optional: add appropriate permissions
+    # permission_classes = [permissions.IsAuthenticated]  # Optional: add appropriate permissions
 
 class BookDetailView(generics.RetrieveAPIView):
     queryset = Book.objects.all()
     serializer_class = BookSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    # permission_classes = [permissions.IsAuthenticated]
