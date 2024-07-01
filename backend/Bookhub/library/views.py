@@ -1,9 +1,13 @@
 from django.contrib.auth import authenticate
-from rest_framework import generics, status
+from rest_framework import generics, status, permissions
 from rest_framework.authtoken.models import Token
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from .serializers import UserSerializer, RegisterSerializer
+from rest_framework.views import APIView
+from .models import Book
+from rest_framework.exceptions import PermissionDenied
+from .serializers import UserSerializer, RegisterSerializer, BookSerializer
+from django.contrib.auth import logout
 
 @api_view(['POST'])
 def login(request):
@@ -36,3 +40,28 @@ class RegisterView(generics.CreateAPIView):
 
     def perform_create(self, serializer):
         return serializer.save()
+
+class LogoutView(APIView):
+    def post(self, request):
+        logout(request)
+        return Response({"detail": "Successfully logged out."}, status=status.HTTP_200_OK)
+
+class BookCreateView(generics.CreateAPIView):
+    queryset = Book.objects.all()
+    serializer_class = BookSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def perform_create(self, serializer):
+        if not self.request.user.is_librarian:
+            raise PermissionDenied("Only librarians can add books.")
+        serializer.save(added_by=self.request.user)
+
+class BookListView(generics.ListAPIView):
+    queryset = Book.objects.all()
+    serializer_class = BookSerializer
+    permission_classes = [permissions.IsAuthenticated]  # Optional: add appropriate permissions
+
+class BookDetailView(generics.RetrieveAPIView):
+    queryset = Book.objects.all()
+    serializer_class = BookSerializer
+    permission_classes = [permissions.IsAuthenticated]

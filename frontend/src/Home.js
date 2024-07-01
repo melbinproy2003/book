@@ -1,6 +1,21 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
 function Home() {
+    const [books, setBooks] = useState([]);
+
+    useEffect(() => {
+        async function fetchBooks() {
+            const response = await fetch('http://localhost:8000/books/', {
+                headers: {
+                    'Authorization': `Token ${localStorage.getItem('token')}`
+                }
+            });
+            const data = await response.json();
+            setBooks(data);
+        }
+        fetchBooks();
+    }, []);
+
     return (
         <div style={styles.container}>
             <header style={styles.header}>
@@ -17,30 +32,17 @@ function Home() {
                 </div>
             </div>
             <div style={styles.cardContainer}>
-                <div style={styles.card}>
-                    <img src="https://placehold.co/200x300" alt="Harry Potter" style={styles.cardImage} />
-                    <div style={styles.cardBody}>
-                        <h5 style={styles.cardTitle}>Harry Potter</h5>
-                        <p style={styles.cardText}>Author: <span style={styles.cardTextBold}>J.K. Rowling</span></p>
-                        <p style={styles.cardText}>Price: <span style={styles.cardTextBold}>40/-</span></p>
+                {books.map(book => (
+                    <div key={book.id} style={styles.card}>
+                        <img src={book.image || 'https://placehold.co/200x300'} alt={book.title} style={styles.cardImage} />
+                        <div style={styles.cardBody}>
+                            <h5 style={styles.cardTitle}>{book.title}</h5>
+                            <p style={styles.cardText}>Author: <span style={styles.cardTextBold}>{book.author}</span></p>
+                            <p style={styles.cardText}>ISBN: <span style={styles.cardTextBold}>{book.isbn}</span></p>
+                            <p style={styles.cardText}>Published: <span style={styles.cardTextBold}>{book.publish_date}</span></p>
+                        </div>
                     </div>
-                </div>
-                <div style={styles.card}>
-                    <img src="https://placehold.co/200x300" alt="Wings of Fire" style={styles.cardImage} />
-                    <div style={styles.cardBody}>
-                        <h5 style={styles.cardTitle}>Wings of Fire</h5>
-                        <p style={styles.cardText}>Author: <span style={styles.cardTextBold}>A.P.J Abdul Kalam</span></p>
-                        <p style={styles.cardText}>Price: <span style={styles.cardTextBold}>400/-</span></p>
-                    </div>
-                </div>
-                <div style={styles.card}>
-                    <img src="https://placehold.co/200x300" alt="Pride and Prejudice" style={styles.cardImage} />
-                    <div style={styles.cardBody}>
-                        <h5 style={styles.cardTitle}>Pride and Prejudice</h5>
-                        <p style={styles.cardText}>Author: <span style={styles.cardTextBold}>Jane Austen</span></p>
-                        <p style={styles.cardText}>Price: <span style={styles.cardTextBold}>200/-</span></p>
-                    </div>
-                </div>
+                ))}
             </div>
         </div>
     );
@@ -51,7 +53,7 @@ const styles = {
         minHeight: '100vh',
         backgroundColor: '#f8f9fa',
         color: '#343a40',
-        fontFamily: 'Arial, sans-serif',  // Changed font style for the entire container
+        fontFamily: 'Arial, sans-serif',
     },
     header: {
         display: 'flex',
@@ -61,7 +63,7 @@ const styles = {
         backgroundColor: '#ffffff',
         boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
         marginBottom: '20px',
-        fontFamily: 'Georgia, serif',  // Changed font style for the header
+        fontFamily: 'Georgia, serif',
     },
     title: {
         fontSize: '24px',
@@ -94,7 +96,7 @@ const styles = {
         border: '1px solid #ced4da',
         paddingRight: '60px',
         fontSize: '16px',
-        fontFamily: 'Courier New, monospace',  // Changed font style for the search input
+        fontFamily: 'Courier New, monospace',
     },
     searchButton: {
         position: 'absolute',
@@ -135,7 +137,7 @@ const styles = {
         fontSize: '18px',
         fontWeight: 'bold',
         marginBottom: '10px',
-        fontFamily: 'Verdana, sans-serif',  // Changed font style for card titles
+        fontFamily: 'Verdana, sans-serif',
     },
     cardText: {
         fontSize: '16px',

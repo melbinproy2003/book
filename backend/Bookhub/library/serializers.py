@@ -1,4 +1,4 @@
-from .models import User
+from .models import User,Book
 from rest_framework import serializers
 
 class UserSerializer(serializers.ModelSerializer):
@@ -19,3 +19,9 @@ class RegisterSerializer(serializers.ModelSerializer):
             password=validated_data['password']
         )
         return user
+
+class BookSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Book
+        fields = ['id', 'title', 'author', 'isbn', 'publish_date', 'image', 'added_by', 'reserved_by']
+        read_only_fields = ['added_by']

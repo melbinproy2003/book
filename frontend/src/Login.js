@@ -12,10 +12,14 @@ function Login() {
         e.preventDefault();
         try {
             const response = await axios.post('http://localhost:8000/api/login/', { username, password });
-            localStorage.setItem('token', response.data.token); // Store token in local storage
-            // alert('Login successful!');
+            const { token, user } = response.data;
+            localStorage.setItem('token', token);
             setError('');
-            navigate('/home'); // Redirect to homepage
+            if (user.is_librarian) {
+                navigate('/librarian-home');
+            } else {
+                navigate('/home');
+            }
         } catch (err) {
             setError('Invalid Credentials');
         }
@@ -97,7 +101,7 @@ const styles = {
         color: '#fff',
         fontSize: '16px',
         cursor: 'pointer',
-        alignSelf: 'center', // Center the button
+        alignSelf: 'center',
     },
     alertError: {
         width: '100%',
@@ -110,7 +114,7 @@ const styles = {
         textAlign: 'center',
     },
     registerLinkContainer: {
-        textAlign: 'center', // Center the text and link
+        textAlign: 'center',
         marginTop: '10px',
     },
     link: {
