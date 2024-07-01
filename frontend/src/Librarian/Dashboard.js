@@ -1,25 +1,41 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
-function Home() {
+function Dashboard() {
     const [books, setBooks] = useState([]);
     const navigate = useNavigate();
 
     useEffect(() => {
         async function fetchBooks() {
             const token = localStorage.getItem('token');
-            console.log('Token:', token);
-            const response = await fetch('http://localhost:8000/api/books/', {
-                headers: {
-                    'Authorization': `Token ${token}`
+
+            // Check if token is empty and show alert
+            if (!token) {
+                window.alert('Please Login');
+                navigate('/login'); // Redirect to login page
+                return;
+            }
+
+            try {
+                const response = await fetch('http://localhost:8000/api/books/', {
+                    headers: {
+                        'Authorization': `Token ${token}`
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to fetch books');
                 }
-            });
-            const data = await response.json();
-            setBooks(data);
+
+                const data = await response.json();
+                setBooks(data);
+            } catch (error) {
+                console.error('Error fetching books:', error);
+            }
         }
-        
+
         fetchBooks();
-    }, []);
+    }, [navigate]);
 
     const handleLogout = () => {
         localStorage.removeItem('token');
@@ -31,7 +47,8 @@ function Home() {
             <header style={styles.header}>
                 <h1 style={styles.title}>Book Hub</h1>
                 <nav style={styles.navbar}>
-                    <a href="#" style={styles.navlink}>HOME</a>
+                    <Link to="/register" style={styles.navlink}>ADD USER</Link>
+                    <Link to="/addBook" style={styles.navlink}>ADD BOOK</Link>
                     <a href="#" style={styles.navlink} onClick={handleLogout}>LOGOUT</a>
                 </nav>
             </header>
@@ -158,4 +175,4 @@ const styles = {
     },
 };
 
-export default Home;
+export default Dashboard;

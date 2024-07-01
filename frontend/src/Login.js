@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 function Login() {
     const [username, setUsername] = useState('');
@@ -16,7 +16,7 @@ function Login() {
             localStorage.setItem('token', token);
             setError('');
             if (user.is_librarian) {
-                navigate('/librarian-home');
+                navigate('/dashboard');
             } else {
                 navigate('/home');
             }
@@ -51,9 +51,6 @@ function Login() {
                     />
                 </div>
                 <button type="submit" style={styles.button}>Login</button>
-                <div style={styles.registerLinkContainer}>
-                    Don't have an account? <Link to="/register" style={styles.link}>Register</Link>
-                </div>
             </form>
         </div>
     );
@@ -116,10 +113,6 @@ const styles = {
     registerLinkContainer: {
         textAlign: 'center',
         marginTop: '10px',
-    },
-    link: {
-        color: '#007BFF',
-        textDecoration: 'none',
     },
 };
 

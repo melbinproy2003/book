@@ -16,13 +16,15 @@ def login(request):
         username = request.data['username']
         password = request.data['password']
     except KeyError:
-        return Response({'error': 'Please provide both username and password.'}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'error': 'Please provide both username and password.'}, status=400)
 
     user = authenticate(username=username, password=password)
     if user:
         token, created = Token.objects.get_or_create(user=user)
-        return Response({'token': token.key, 'user': UserSerializer(user).data})
-    return Response({'error': 'Invalid Credentials'}, status=status.HTTP_400_BAD_REQUEST)
+        user_data = UserSerializer(user).data
+        user_data['is_librarian'] = user.is_librarian  # Ensure this field is added
+        return Response({'token': token.key, 'user': user_data})
+    return Response({'error': 'Invalid Credentials'}, status=400)
 
 class RegisterView(generics.CreateAPIView):
     serializer_class = RegisterSerializer

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import axiosInstance from './axiosInstance';
+import axiosInstance from '../axiosInstance';
 import { Link } from 'react-router-dom';
 
 function Register() {
@@ -24,7 +24,7 @@ function Register() {
 
     return (
         <div style={styles.container}>
-            <h2 style={styles.header}>Register</h2>
+            <h2 style={styles.header}>New User</h2>
             <form onSubmit={handleSubmit} style={styles.form}>
                 {error && <div style={styles.alertError}>{error}</div>}
                 {success && <div style={styles.alertSuccess}>{success}</div>}
@@ -59,9 +59,6 @@ function Register() {
                     />
                 </div>
                 <button type="submit" style={styles.button}>Register</button>
-                <div style={styles.registerLinkContainer}>
-                    Already have an account? <Link to="/login" style={styles.link}>Login</Link>
-                </div>
             </form>
         </div>
     );
